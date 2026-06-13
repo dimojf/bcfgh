@@ -236,25 +236,10 @@
                     count++;
                     document.getElementById('progress').innerText = count;
 
-                    // 2. Image Chunk Sorting (PNG/GIF Extension Check Included)
+                    // 2. Image Chunk Sorting
                     if(imageUrl) {
                         const imgBlob = await fetchImageBlob(imageUrl);
                         if(imgBlob) {
-                            // Automatically detect file extension from URL (.gif, .jpg, etc.), defaults to .png
-                            let extension = 'png';
-                            try {
-                                const cleanUrl = imageUrl.split('?')[0].split('#')[0];
-                                const parts = cleanUrl.split('.');
-                                if (parts.length > 1) {
-                                    const ext = parts.pop().toLowerCase();
-                                    if (['gif', 'jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
-                                        extension = ext;
-                                    }
-                                }
-                            } catch (extErr) {
-                                extension = 'png';
-                            }
-
                             // Find which ZIP group this ID belongs to
                             const numericId = parseInt(item.id);
                             const chunkIndex = Math.floor(numericId / imagesPerZip);
@@ -266,8 +251,8 @@
                                 imageZipsData[groupKey] = new JSZip();
                             }
 
-                            // Add file to zip using the dynamic extension (e.g., 1.gif or 1.png)
-                            imageZipsData[groupKey].file(`${item.id}.${extension}`, imgBlob);
+                            // Add image file to specific ZIP object
+                            imageZipsData[groupKey].file(`${item.id}.png`, imgBlob);
                             imgCount++;
                             document.getElementById('imgProgress').innerText = imgCount;
                         } else {
